@@ -10,7 +10,9 @@
     tools:showIn="@layout/activity_task_view">
 
     <ListView
+        android:id="@+id/simpleListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/taskView"/>
+        android:divider="#093182"
+        android:dividerHeight="1dp" />
 </LinearLayout>

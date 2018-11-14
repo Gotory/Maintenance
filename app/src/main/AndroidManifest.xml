@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +30,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activities.SelectBuilding" />
         <activity android:name=".Activities.FloorLayout" />
-        <activity android:name=".Activities.Room"></activity>
+        <activity android:name=".Activities.Room" />
+        <activity android:name=".Activities.TaskDetails"></activity>
     </application>
 
 </manifest>

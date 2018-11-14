@@ -1,11 +1,14 @@
 package com.dmt_winches.maintenance.Common;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -15,33 +18,30 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HttpRequest {
     private HashMap<String, String> postParams;
-    private String postURL;
     private String response;
 
-    public HttpRequest(HashMap<String, String> postParams, String url) {
+    public HttpRequest(HashMap<String, String> postParams) {
         this.postParams = postParams;
-        this.postURL = url;
         response = "";
     }
 
     public String connect() {
         BufferedReader br = null;
-        HttpsURLConnection conn = null;
-//        postParams.put(VipconnConstants.JSON_MOBILE, VipconnConstants.OS);
-//        postParams.put(VipconnConstants.JSON_OS, VipconnConstants.OS);
+        HttpURLConnection conn = null;
 
         try {
+            final String postURL = "http://doubleuchat.com/maintenance/request.php";
             URL url = new URL(postURL);
-            conn = (HttpsURLConnection) url.openConnection();
-//            conn.setReadTimeout(VipconnConstants.HTTP_READ_TIMEOUT);
-//            conn.setConnectTimeout(VipconnConstants.CONNECTION_TIME_OUT);
-//            conn.setRequestMethod(VipconnConstants.POST);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(10000);
+            conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-//            writer.write(VipconnHelper.getInstance().getPostDataString(postParams));
+            writer.write(Helper.getInstance().getPostDataString(postParams));
 
             writer.flush();
             writer.close();
@@ -55,25 +55,17 @@ public class HttpRequest {
                     response += line;
                 }
             } else {
-//                response = VipconnConstants.JSON_CONNECTION_ERROR;
-//                if(VipconnConstants.DBG) Log.d(VipconnConstants.TAG, "PostResponseAsyncTask " + responseCode);
+                response = "Connection error";
             }
 
-        } catch (ProtocolException e) {
-//            if(VipconnConstants.DBG) Log.d(VipconnConstants.TAG, "HttpConnection: protocol exception " + e.toString());
-//            response = VipconnConstants.JSON_CONNECTION_ERROR;
-        } catch (MalformedURLException e) {
-//            if(VipconnConstants.DBG) Log.d(VipconnConstants.TAG, "HttpConnection: malformed url exception " + e.toString());
-//            response = VipconnConstants.JSON_CONNECTION_ERROR;
         } catch (IOException e) {
-//            if(VipconnConstants.DBG) Log.d(VipconnConstants.TAG, "HttpConnection: I/O exception " + e.toString());
-//            response = VipconnConstants.JSON_CONNECTION_ERROR;
+            response = "Connection error";
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-//                    if(VipconnConstants.DBG) Log.d(VipconnConstants.TAG, "HttpConnection: I/O exception " + e.toString());
+                    e.printStackTrace();
                 }
             }
             if (conn != null) {
