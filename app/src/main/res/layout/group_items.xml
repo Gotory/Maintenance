@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -20,7 +21,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="284dp"
             android:layout_marginLeft="284dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:text="00:00" />
 
         <ImageView
             android:id="@+id/icon"
@@ -35,16 +37,17 @@
 
         <ImageView
             android:id="@+id/icon3"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
+            android:layout_width="107dp"
+            android:layout_height="22dp"
             android:layout_alignTop="@+id/heading"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="42dp"
-            android:layout_marginLeft="42dp"
-            android:layout_marginTop="-3dp"
+            android:layout_marginStart="19dp"
+            android:layout_marginLeft="19dp"
+            android:layout_marginTop="6dp"
             android:clickable="true"
             android:visibility="gone"
+            app:srcCompat="@drawable/finish"
             tools:src="@drawable/finish" />
 
         <ImageView
@@ -70,12 +73,52 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="115dp"
-            android:layout_marginLeft="115dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="114dp"
+            android:layout_marginLeft="114dp"
+            android:layout_marginTop="2dp"
             android:paddingLeft="35sp"
+            android:text="Task1"
+            android:textAlignment="textStart"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/workerNameTV"
+            android:layout_width="176dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="47dp"
+            android:layout_marginLeft="47dp"
+            android:layout_marginTop="29dp"
+            android:layout_marginEnd="131dp"
+            android:fontFamily="sans-serif"
+            android:paddingLeft="35sp"
+            android:text="Worker:"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/statusTV"
+            android:layout_width="91dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="242dp"
+            android:layout_marginLeft="242dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="21dp"
+            android:paddingLeft="35sp"
+            android:text="Not Started"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10sp"
             android:textStyle="bold" />
     </RelativeLayout>
 

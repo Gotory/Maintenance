@@ -1,5 +1,7 @@
 package com.dmt_winches.maintenance.Activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,11 +11,17 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.dmt_winches.maintenance.Adapters.GroupInfo;
@@ -27,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TaskView extends AppCompatActivity {
 
@@ -38,6 +47,8 @@ public class TaskView extends AppCompatActivity {
     private String mUserType;
     private String mUserName;
     private String message;
+    private Toolbar toolbar;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,29 @@ public class TaskView extends AppCompatActivity {
 
         myList = findViewById(R.id.simpleListView);
         listAdapter = new MyAdapter(this, taskList);
+        toolbar = findViewById(R.id.toolbar);
+        spinner = findViewById(R.id.spinner);
+        List<String> list = new ArrayList<String>();
+        list.add("All");
+        list.add("Not Started");
+        list.add("Started");
+        list.add("Finished");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                listAdapter.getFilter().filter(spinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +94,7 @@ public class TaskView extends AppCompatActivity {
         preferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         GetTaskList taskTry = new GetTaskList(preferences.getString("userId",""), preferences.getString("userName", ""),this.getIntent().getStringExtra("userType"));
         taskTry.execute((Void) null);
-
+        setSupportActionBar(toolbar);
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -119,6 +153,32 @@ public class TaskView extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        SearchView searchView;
+        getMenuInflater().inflate(R.menu.menu,menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.search)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                listAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                listAdapter.getFilter().filter(query);
+                return false;
+            }
+        });
+        return true;
+    }
+
     public class GetTaskList extends AsyncTask<Void, Void, Boolean> {
 
 
@@ -160,7 +220,7 @@ public class TaskView extends AppCompatActivity {
                 info.setWoker_name("Andrei");
                 info.setTask_add_date("12/11/2018");
                 info.setTask_finish_date(null);
-                info.setStatus("Neinceput");
+                info.setStatus("Not Started");
                 taskList.add(info);
 
 

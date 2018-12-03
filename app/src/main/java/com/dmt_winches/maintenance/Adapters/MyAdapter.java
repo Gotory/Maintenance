@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -32,12 +37,18 @@ import static android.content.Context.MODE_PRIVATE;
 public class MyAdapter extends ArrayAdapter<GroupInfo>  {
     private Context context;
     private SharedPreferences preferences;
-    String workId;
+    private String workId;
+    private GroupInfo task;
+    private Runnable timerRunnable;
+    private List<GroupInfo> originalData = null;
+    private List<GroupInfo>filteredData = null;
+    Spinner spinner;
+
 
     public static class ViewHolder {
-        public TextView heading,childItem, timp,description;
+        TextView heading,childItem, timp,description;
         private ImageView icon,icon2,icon3,imagine;
-        public long startTime;
+        long startTime;
         Handler timerHandler;
         long timeInMilliseconds = 0L;
         long timeSwapBuff = 0L;
@@ -46,10 +57,13 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
         int secs,mins,hours;
 
     }
+    private ViewHolder holder;
 
-    public MyAdapter(Context context, ArrayList<GroupInfo> taskuri) {
-        super(context, R.layout.content_task_view, taskuri);
+    public MyAdapter(Context context, ArrayList<GroupInfo> originalData) {
+        super(context, R.layout.content_task_view, originalData);
         this.context=context;
+        this.filteredData = originalData;
+        this.originalData = originalData;
     }
 
     @Override
@@ -58,10 +72,15 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
     }
 
     @Override
+    public int getCount() {
+        return filteredData.size();
+    }
+
+    @Override
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-        final GroupInfo task = getItem(position);
+
+        task = filteredData.get(position);
         if (convertView == null) {
             holder = new ViewHolder();
             LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -74,7 +93,7 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
         holder.timerHandler = new Handler();
         holder.timp = convertView.findViewById(R.id.cronometru);
         //region regiuneCron
-            final Runnable timerRunnable = new Runnable() {
+            timerRunnable = new Runnable() {
             public void run() {
                 holder.timeInMilliseconds = SystemClock.uptimeMillis() - holder.startTime;
                 holder.updatedTime = holder.timeSwapBuff + holder.timeInMilliseconds;
@@ -106,17 +125,6 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
                 preferences = context.getSharedPreferences("loginPrefs", MODE_PRIVATE);
                 StartTask startTask = new StartTask(task.getTask_id(), preferences.getString("userId",""));
                 startTask.execute();
-                holder.stopTimer = false;
-                holder.startTime = SystemClock.uptimeMillis();
-                holder.timerHandler.postDelayed(timerRunnable, 0);
-                holder.icon.setVisibility(View.GONE);
-                holder.icon2.setVisibility(View.VISIBLE);
-                holder.icon3.setVisibility(View.VISIBLE);
-
-               if(!holder.stopTimer){
-                   holder.timeSwapBuff += holder.timeInMilliseconds;
-               }
-
             }
         });
         holder.icon2.setOnClickListener(new View.OnClickListener(){
@@ -124,11 +132,6 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
             public void onClick(View v) {
                 PauseTask pauseTask = new PauseTask(workId);
                 pauseTask.execute();
-                holder.stopTimer = true;
-                holder.icon.setVisibility(View.VISIBLE);
-                holder.icon2.setVisibility(View.GONE);
-                holder.timerHandler.removeCallbacks(timerRunnable);
-
             }
         });
         holder.icon3.setOnClickListener(new View.OnClickListener(){
@@ -136,14 +139,6 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
             public void onClick(View v) {
                 FinishTask finishTask = new FinishTask(workId);
                 finishTask.execute();
-                holder.icon.setVisibility(View.GONE);
-                holder.icon2.setVisibility(View.GONE);
-                holder.icon3.setVisibility(View.GONE);
-                Toast.makeText(context, holder.timp.getText().toString(),
-                        Toast.LENGTH_SHORT).show();
-                holder.timerHandler.removeCallbacks(timerRunnable);
-
-
             }
         });
 //endregion
@@ -163,6 +158,7 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
             mUserId = userId;
 
         }
+
         @Override
         protected Boolean doInBackground(Void... voids) {
             HashMap<String, String> postParams = new HashMap<>();
@@ -198,6 +194,18 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
             if (!success) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
+            else{
+                holder.stopTimer = false;
+                holder.startTime = SystemClock.uptimeMillis();
+                holder.timerHandler.postDelayed(timerRunnable, 0);
+                holder.icon.setVisibility(View.GONE);
+                holder.icon2.setVisibility(View.VISIBLE);
+                holder.icon3.setVisibility(View.VISIBLE);
+
+                if(!holder.stopTimer){
+                    holder.timeSwapBuff += holder.timeInMilliseconds;
+                }
+            }
         }
     }
 
@@ -208,6 +216,14 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
         PauseTask(String workId) {
             this.mWorkId=workId;
 
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            holder.stopTimer = true;
+            holder.icon.setVisibility(View.VISIBLE);
+            holder.icon2.setVisibility(View.GONE);
+            holder.timerHandler.removeCallbacks(timerRunnable);
         }
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -235,6 +251,8 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
 
             return true;
         }
+
+
 
         protected void onPostExecute(final Boolean success){
 
@@ -252,6 +270,16 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
             mWorkId=workId;
 
         }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            holder.icon.setVisibility(View.GONE);
+            holder.icon2.setVisibility(View.GONE);
+            holder.icon3.setVisibility(View.GONE);
+            holder.timerHandler.removeCallbacks(timerRunnable);
+        }
+
         @Override
         protected Boolean doInBackground(Void... voids) {
             HashMap<String, String> postParams = new HashMap<>();
@@ -287,4 +315,40 @@ public class MyAdapter extends ArrayAdapter<GroupInfo>  {
         }
     }
 
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty() || charString.equals("All")) {
+                    filteredData = originalData;
+                } else {
+                    List<GroupInfo> filteredList = new ArrayList<>();
+                    for (GroupInfo row : originalData) {
+
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.getTask_name().toLowerCase().contains(charString.toLowerCase()) || row.getTask_name().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                        if (row.getStatus().toLowerCase().equals(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    filteredData = filteredList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredData = (ArrayList<GroupInfo>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 }
