@@ -29,8 +29,8 @@
             android:label="@string/title_activity_task_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activities.SelectBuilding" />
-        <activity android:name=".Activities.FloorLayout" />
         <activity android:name=".Activities.Room" />
+        <activity android:name=".Activities.RoomSelect" />
         <activity android:name=".Activities.TaskDetails"></activity>
     </application>
 

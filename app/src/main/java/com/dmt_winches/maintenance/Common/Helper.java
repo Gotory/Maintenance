@@ -15,8 +15,6 @@ public class Helper {
         return Instance;
     }
 
-
-
     String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -30,7 +28,6 @@ public class Helper {
             result.append("=");
             result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
-
         return result.toString();
     }
 

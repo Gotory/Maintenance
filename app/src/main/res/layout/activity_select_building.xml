@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.SelectBuilding"
-    >
+    tools:context=".Activities.SelectBuilding">
 
     <LinearLayout
         android:id="@+id/secondHall"
@@ -16,14 +15,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/serch"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.107"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.173"
-        android:gravity="center">
+        app:layout_constraintVertical_bias="0.173">
 
         <TextView
             android:id="@+id/secondHallTV"
@@ -42,14 +41,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/newh"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.662"
         app:layout_constraintStart_toEndOf="@+id/secondHall"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.173"
-        android:gravity="center">
+        app:layout_constraintVertical_bias="0.173">
 
         <TextView
             android:id="@+id/newHallTV"
@@ -93,13 +92,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/mainb"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.107"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/secondHall"
-        android:gravity="center">
+        app:layout_constraintTop_toBottomOf="@+id/secondHall">
 
         <TextView
             android:id="@+id/mainBuildingTV"
@@ -117,13 +116,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/carp"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.693"
         app:layout_constraintStart_toEndOf="@+id/mainBuilding"
-        app:layout_constraintTop_toBottomOf="@+id/newHall"
-        android:gravity="center">
+        app:layout_constraintTop_toBottomOf="@+id/newHall">
 
         <TextView
             android:id="@+id/carParkTV"
@@ -146,7 +145,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.026"
+        app:layout_constraintHorizontal_bias="0.084"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainBuilding"
         app:layout_constraintVertical_bias="0.864">

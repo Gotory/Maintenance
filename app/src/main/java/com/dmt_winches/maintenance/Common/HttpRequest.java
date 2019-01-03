@@ -1,7 +1,5 @@
 package com.dmt_winches.maintenance.Common;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,8 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 

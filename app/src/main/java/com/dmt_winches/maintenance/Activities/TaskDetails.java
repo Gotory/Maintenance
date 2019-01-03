@@ -1,8 +1,8 @@
 package com.dmt_winches.maintenance.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -38,26 +38,19 @@ public class TaskDetails extends AppCompatActivity {
         String addDate = getIntent().getStringExtra("TaskAddDate");
         String finishDate = getIntent().getStringExtra("TaskEndDate");
 
-        final String building = getIntent().getStringExtra("TaskBuilding");
-        final String floor = getIntent().getStringExtra("TaskFloor");
-        final String room = getIntent().getStringExtra("TaskRoom");
-        final String coordX = getIntent().getStringExtra("TaskCoordX");
-        final String coordY = getIntent().getStringExtra("TaskCoordY");
-
         Button roomBtn = findViewById(R.id.roomBTN);
 
-        roomBtn.setOnClickListener(new View.OnClickListener(){
+        roomBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TaskDetails.this, Room.class);
-                intent.putExtra("TaskBuilding", building);
-                intent.putExtra("TaskFloor", floor);
-                intent.putExtra("TaskRoom", room);
-                intent.putExtra("TaskCoordX", coordX);
-                intent.putExtra("TaskCoordY", coordY);
+                Intent intent = new Intent(TaskDetails.this, RoomSelect.class);
+                intent.putExtra("TaskBuilding", getIntent().getStringExtra("TaskBuilding"));
+                intent.putExtra("TaskFloor", getIntent().getStringExtra("TaskFloor"));
+                intent.putExtra("TaskRoom", getIntent().getStringExtra("TaskRoom"));
+                intent.putExtra("TaskCoordX", getIntent().getStringExtra("TaskCoordX"));
+                intent.putExtra("TaskCoordY", getIntent().getStringExtra("TaskCoordY"));
                 startActivity(intent);
-
             }
         });
 
@@ -68,6 +61,5 @@ public class TaskDetails extends AppCompatActivity {
         statusTV.setText(status);
         addDateTV.setText(addDate);
         finishDateTV.setText(finishDate);
-
     }
 }

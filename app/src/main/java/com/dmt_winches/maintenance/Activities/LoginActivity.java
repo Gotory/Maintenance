@@ -4,19 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dmt_winches.maintenance.Common.HttpRequest;
@@ -26,11 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
-
-
-    // UI references.
     private EditText mUserView;
     private EditText mPasswordView;
     private SharedPreferences loginPreferences;
@@ -58,37 +52,34 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-        findViewById(R.id.loginLayout).setOnTouchListener(new View.OnTouchListener() {
+        findViewById(R.id.loginLayout).setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                return true;
+                IBinder token = Objects.requireNonNull(getCurrentFocus()).getWindowToken();
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(token, 0);
+                }
             }
         });
     }
 
     private void attemptLogin() {
-
-        // Reset errors.
         mUserView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
         String userName = mUserView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(userName)) {
             mUserView.setError(getString(R.string.error_field_required));
             focusView = mUserView;
@@ -96,18 +87,14 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Perform the user login attempt.
             UserLoginTask mAuthTask = new UserLoginTask(userName, password);
             mAuthTask.execute((Void) null);
         }
     }
 
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
         private final String mUser;
         private final String mPassword;
         private String userType;
@@ -120,7 +107,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-
             HashMap<String, String> postParams = new HashMap<>();
 
             postParams.put("type", "login");
@@ -145,32 +131,25 @@ public class LoginActivity extends AppCompatActivity {
                     String userName = json.getString("user_name");
                     if (rememberMe.isChecked()) {
                         loginPreferences.edit().putString("username", mUser)
-                        .putBoolean("saveLogin", true)
-                        .putString("password", mPassword)
-                        .putString("userId", userId)
-                        .putString("userName", userName)
-                        .apply();
+                                .putBoolean("saveLogin", true)
+                                .putString("password", mPassword)
+                                .putString("userId", userId)
+                                .putString("userName", userName).apply();
                     } else {
-                        loginPreferences.edit().clear()
-                        .apply();
+                        loginPreferences.edit().clear().apply();
                     }
-
                 } else {
                     message = json.getString("message");
                     return false;
                 }
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-
             if (success) {
                 Intent login = new Intent(LoginActivity.this, TaskView.class);
                 login.putExtra("userType", userType);
